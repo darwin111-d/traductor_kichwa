@@ -257,10 +257,6 @@ st.text_area(
     disabled=True
 )
 
-# Refrescar la app automáticamente si está esperando traducir
-if st.session_state["texto_entrada"].strip() != "" and time.time() - st.session_state["last_input_time"] <= 3:
-    st.rerun()
-
 # Botón para escuchar la traducción (ahora justo debajo del cuadro de traducción)
 if traduccion:
     if st.button("🔊 Escuchar traducción"):
