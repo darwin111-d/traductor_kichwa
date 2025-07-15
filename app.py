@@ -1,6 +1,5 @@
 import streamlit as st
 from PIL import Image
-import pyttsx3
 from io import BytesIO
 import speech_recognition as sr
 import unicodedata
