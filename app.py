@@ -1,12 +1,13 @@
 import streamlit as st
 from PIL import Image
+import pyttsx3
 from io import BytesIO
 import speech_recognition as sr
 import unicodedata
 import os
 import base64
 import sys
-import time
+import time 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'traductor_kichwa'))
 try:
     from st_audiorec import st_audiorec
@@ -15,16 +16,24 @@ except ImportError:
     AUDIOREC_AVAILABLE = False
 
 from traductor_kichwa.main import traducir_oracion, normalizar_texto
-from gtts import gTTS
 
 # === FUNCIONES DE AUDIO ===
+@st.cache_resource
+def get_tts_engine():
+    engine = pyttsx3.init()
+    engine.setProperty('rate', 100)      # Más lento (valor típico: 100-150)
+    engine.setProperty('volume', 0.8)    # Más suave (0.0 a 1.0)
+    engine.setProperty('voice', 'spanish')
+    return engine
+
 def text_to_audio(text):
-    tts = gTTS(text=text, lang='es', slow=True)
+    engine = get_tts_engine()
     temp_filename = 'temp_audio.mp3'
-    tts.save(temp_filename)
+    engine.save_to_file(text, temp_filename)
+    engine.runAndWait()
     with open(temp_filename, 'rb') as f:
         audio_bytes = f.read()
-    os.remove(temp_filename)
+    os.remove(temp_filename)  # Elimina el archivo temporal
     return audio_bytes
 
 # Ruta de imágenes
@@ -256,6 +265,10 @@ st.text_area(
     key="traduccion_area",
     disabled=True
 )
+
+# Refrescar la app automáticamente si está esperando traducir
+if st.session_state["texto_entrada"].strip() != "" and time.time() - st.session_state["last_input_time"] <= 3:
+    st.rerun()
 
 # Botón para escuchar la traducción (ahora justo debajo del cuadro de traducción)
 if traduccion:
