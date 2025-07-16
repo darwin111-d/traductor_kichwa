@@ -229,6 +229,8 @@ if "texto_entrada" not in st.session_state:
     st.session_state["texto_entrada"] = ""
 if "traduccion" not in st.session_state:
     st.session_state["traduccion"] = ""
+if "last_input_time" not in st.session_state:
+    st.session_state["last_input_time"] = 0
 
 texto_entrada = st.text_area(
     "Ingresa el texto a traducir:",
@@ -243,6 +245,7 @@ texto_entrada = st.text_area(
 traduccion = ""
 traduccion_realizada = False
 if st.button("🔄 Traducir", key="btn_traducir"):
+    st.session_state["last_input_time"] = time.time()
     try:
         if texto_entrada.strip() == "":
             raise ValueError("Por favor, ingresa una oración para traducir.")
@@ -250,10 +253,11 @@ if st.button("🔄 Traducir", key="btn_traducir"):
         if len(texto_entrada.strip().split()) < 2:
             raise ValueError("La oración debe tener al menos un sujeto y un verbo.")
         traduccion = traducir_oracion(texto_entrada)
+        st.session_state["traduccion"] = traduccion
+        traduccion_realizada = True
     except Exception as e:
-        traduccion = f"Error: {str(e)}"
-    st.session_state["traduccion"] = traduccion
-    traduccion_realizada = True
+        # No mostrar nada en el área de traducción ni en la interfaz
+        pass
 else:
     traduccion = st.session_state["traduccion"]
 
