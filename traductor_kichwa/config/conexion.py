@@ -6,7 +6,7 @@ def conectar_bd():
         port=3308,
         user="root",
         password="",
-        database="traductorv2",
+        database="traductorfinal",
         charset="utf8mb4",
         use_unicode=True
     )
