@@ -32,12 +32,14 @@ def construir_complemento(tokens_es: list[str]):
                 raiz = buscar_traduccion_palabra(nxt)
                 if raiz:
                     fusion = raiz + forma
-                    if m["tipo"] in PREVERB_TYPES:
-                        comp_pre.append(fusion)
-                    else:
-                        comp_norm.append(fusion)
-                    i += 2
-                    continue
+                else:
+                    fusion = tokens_es[i+1] + forma  # Une el morfema a la palabra original si no hay traducción
+                if m["tipo"] in PREVERB_TYPES:
+                    comp_pre.append(fusion)
+                else:
+                    comp_norm.append(fusion)
+                i += 2
+                continue
             if m["tipo"] in PREVERB_TYPES:
                 comp_pre.append(forma)
             else:
@@ -47,6 +49,8 @@ def construir_complemento(tokens_es: list[str]):
         raiz = buscar_traduccion_palabra(tok)
         if raiz:
             comp_norm.append(raiz)
+        else:
+            comp_norm.append(tokens_es[i])  # Agrega la palabra original si no hay traducción
         i += 1
 
     return comp_norm, comp_pre
